@@ -1,0 +1,163 @@
+[
+  {
+    "Ten": "Công nghệ thông tin",
+    "MonHoc": [
+      "Lập trình C/C++",
+      "Lập trình Java",
+      "Cấu trúc dữ liệu và giải thuật",
+      "Mạng máy tính",
+      "Hệ điều hành",
+      "Cơ sở dữ liệu",
+      "Trí tuệ nhân tạo",
+      "Phân tích và thiết kế hệ thống",
+      "An ninh mạng",
+      "Khoa học dữ liệu",
+      "Phát triển ứng dụng di động",
+      "Phát triển web",
+      "Kỹ thuật phần mềm",
+      "Lập trình Python",
+      "Thị giác máy tính"
+    ]
+  },
+  {
+    "Ten": "Kinh tế",
+    "MonHoc": [
+      "Kinh tế vi mô",
+      "Kinh tế vĩ mô",
+      "Tài chính doanh nghiệp",
+      "Quản trị marketing",
+      "Kế toán tài chính",
+      "Thương mại điện tử",
+      "Quản lý nguồn nhân lực",
+      "Nguyên lý thống kê",
+      "Phân tích tài chính",
+      "Kinh tế phát triển",
+      "Kinh tế quốc tế",
+      "Luật kinh tế",
+      "Quản trị chiến lược",
+      "Quản trị vận hành",
+      "Quản lý dự án"
+    ]
+  },
+  {
+    "Ten": "Y học",
+    "MonHoc": [
+      "Giải phẫu học",
+      "Sinh lý học",
+      "Dược lý học",
+      "Bệnh học",
+      "Y tế công cộng",
+      "Nhi khoa",
+      "Nội khoa",
+      "Ngoại khoa",
+      "Phụ sản",
+      "Tâm thần học",
+      "Dinh dưỡng học",
+      "Huyết học",
+      "Miễn dịch học",
+      "Da liễu",
+      "Nha khoa"
+    ]
+  },
+  {
+    "Ten": "Kỹ thuật điện",
+    "MonHoc": [
+      "Mạch điện",
+      "Điện tử cơ bản",
+      "Kỹ thuật đo lường",
+      "Hệ thống điều khiển tự động",
+      "Máy điện",
+      "Điện tử công suất",
+      "Điều khiển số",
+      "Hệ thống điện",
+      "Điện tử viễn thông",
+      "Điện tử y sinh",
+      "Kỹ thuật cảm biến",
+      "Thiết kế vi mạch",
+      "Công nghệ năng lượng tái tạo",
+      "Kỹ thuật chiếu sáng",
+      "Điện tử hàng không"
+    ]
+  },
+  {
+    "Ten": "Luật",
+    "MonHoc": [
+      "Luật hiến pháp",
+      "Luật dân sự",
+      "Luật hình sự",
+      "Luật thương mại",
+      "Luật quốc tế",
+      "Luật lao động",
+      "Luật hành chính",
+      "Luật môi trường",
+      "Pháp luật về sở hữu trí tuệ",
+      "Pháp luật về đất đai",
+      "Pháp luật về thuế",
+      "Luật tố tụng dân sự",
+      "Luật tố tụng hình sự",
+      "Luật kinh doanh bảo hiểm",
+      "Luật giao thông"
+    ]
+  },
+  {
+    "Ten": "Kỹ thuật cơ khí",
+    "MonHoc": [
+      "Cơ học ứng dụng",
+      "Vật liệu kỹ thuật",
+      "Cơ học chất lỏng",
+      "Nhiệt động lực học",
+      "Kỹ thuật chế tạo",
+      "Kỹ thuật cơ điện tử",
+      "Thiết kế cơ khí",
+      "Điều khiển tự động",
+      "Kỹ thuật hàn",
+      "Cơ học kết cấu",
+      "Kỹ thuật ô tô",
+      "Đồ họa kỹ thuật",
+      "Máy công cụ",
+      "Kỹ thuật robot",
+      "Công nghệ gia công chính xác"
+    ]
+  },
+  {
+    "Ten": "Kiến trúc",
+    "MonHoc": [
+      "Nguyên lý thiết kế kiến trúc",
+      "Lịch sử kiến trúc",
+      "Kỹ thuật xây dựng",
+      "Thiết kế nội thất",
+      "Thiết kế cảnh quan",
+      "Vật liệu xây dựng",
+      "Đồ họa kiến trúc",
+      "Công nghệ BIM",
+      "Thiết kế đô thị",
+      "Quy hoạch vùng và đô thị",
+      "Kiến trúc hiện đại",
+      "Phát triển bền vững",
+      "Kỹ thuật kết cấu",
+      "Kiến trúc xanh",
+      "Quản lý dự án xây dựng"
+    ]
+  },
+  {
+    "Ten": "Khoa học môi trường",
+    "MonHoc": [
+      "Sinh thái học",
+      "Hóa học môi trường",
+      "Địa chất học",
+      "Quản lý tài nguyên nước",
+      "Đánh giá tác động môi trường",
+      "Kỹ thuật xử lý nước thải",
+      "Quản lý chất thải rắn",
+      "Ô nhiễm không khí",
+      "Công nghệ xanh",
+      "Biến đổi khí hậu",
+      "Quản lý đất đai",
+      "Hệ thống thông tin địa lý (GIS)",
+      "Sinh học đất",
+      "Kinh tế môi trường",
+      "Quản lý môi trường"
+    ]
+  }
+]
+

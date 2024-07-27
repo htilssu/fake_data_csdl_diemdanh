@@ -1,38 +1,38 @@
+from pydoc import stripid
+
 from faker import Faker
 from faker.generator import random
 from faker.providers import DynamicProvider
 
-import db
-from address_provider import streets, districts, cities
+from db import (clazz_list, insert_class, insert_lecturer, insert_student, lecturer_list,
+                major_list, \
+                specialized_list, )
+from model.class_ import Class
+from model.Lecturer import Lecturer
+from model.student import Student
+from name_provider import cities_provider, districts_provider, female_name_provider, \
+    last_name_provider, \
+    male_name_provider, \
+    street_provider
 
-# Tên
-last_name_provider = DynamicProvider(
-    provider_name="last_name_htilssu",
-    elements=["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô"],
+major_provider = DynamicProvider(
+    provider_name="major_htilssu",
+    elements=major_list,
 )
 
-female_name_provider = DynamicProvider(
-    provider_name="female_name_htilssu",
-    elements=["Ngọc", "Kim", "Hồng", "Thu", "Hương", "Lan", "Mai", "Phương", "Thùy", "Diệu", "Anh", "Hà", "Yến"],
-)
-male_name_provider = DynamicProvider(
-    provider_name="male_name_htilssu",
-    elements=["Trung", "Duy", "Hải", "Hùng", "Minh", "Hà", "Phương", "Quang", "Tùng", "Việt", "An", "Bảo", "Công",
-              "Đức", "Huy", "Khoa", "Long", "Nam", "Phúc", "Quốc", "Sơn", "Tùng", "Tuấn", "Vinh"],
+spec_provider = DynamicProvider(
+    provider_name="spec_htilssu",
+    elements=specialized_list,
 )
 
-street_provider = DynamicProvider(
-    provider_name="street_provider_htilssu",
-    elements=streets,
+lec_provider = DynamicProvider(
+    provider_name="lec_htilssu",
+    elements=lecturer_list,
 )
 
-districts_provider = DynamicProvider(
-    provider_name="districts_provider_htilssu",
-    elements=districts)
-
-cities_provider = DynamicProvider(
-    provider_name="cities_provider_htilssu",
-    elements=cities,
+clzz_provider = DynamicProvider(
+    provider_name="class_htilssu",
+    elements=clazz_list,
 )
 
 fake = Faker('it_IT')
@@ -42,18 +42,25 @@ fake.add_provider(male_name_provider)
 fake.add_provider(street_provider)
 fake.add_provider(districts_provider)
 fake.add_provider(cities_provider)
+fake.add_provider(major_provider)
+fake.add_provider(spec_provider)
+fake.add_provider(lec_provider)
+fake.add_provider(clzz_provider)
 
 
 def gen_address():
-    return (fake.building_number() + ", " + fake.street_provider_htilssu() + ", " + fake.districts_provider_htilssu()
+    return (
+            fake.building_number() + ", " + fake.street_provider_htilssu() + ", "
+                                                                             "" +
+            fake.districts_provider_htilssu()
             + ", " + fake.cities_provider_htilssu())
 
 
-conn = db.conn
+# conn = db.conn
 
-email = "st.edu.vn"
+student_mail = "st.edu.vn"
+lecturer_mail = "edu.vn"
 
-number = 100
 current_year = 24
 
 
@@ -73,45 +80,80 @@ def gen_phone_number():
     phone_num = len(phone.split(" ")) == 1 and phone.split(" ")[0] or phone.split(" ")[1]
     if len(phone_num) == 9:
         phone_num = "0" + phone_num
-    else:
+    elif len(phone_num) < 10:
         phone_num = "0" + phone_num[1:]
 
     return phone_num
 
 
-def random_year_postfix():
+def random_year_prefix():
     return fake.random_int(min=18, max=24)
 
 
 def gen_student():
-    school_year = random_year_postfix()
+    clazz: Class = fake.class_htilssu()
+    school_year = random_year_prefix()
+    clazz_id = stripid(clazz.name)
+    s = clazz_id.replace(clazz.spec_id, "")[:2]
+    if s != str(school_year):
+        return None
     idd = fake.numerify(text=f'{school_year}DH######')
+
     last_name = fake.last_name_htilssu()
     sex = gen_sex()
     first_name = gen_first_name(sex)
     name = last_name + " " + first_name
-    email_st = idd + "@" + email
-    phone = fake.phone_number()
+    email_st = idd + "@" + student_mail
+    fake.phone_number()
     phone = gen_phone_number()
     address = gen_address()
     birthday = fake.date_of_birth(minimum_age=18 + current_year - school_year,
                                   maximum_age=18 + current_year - school_year)
-    return Student(idd, name, email_st, phone, address, birthday, sex)
+    return Student(idd, name, email_st, phone, address, birthday, sex, clazz_id)
 
 
-class Student:
-    def __init__(self, id1, name, emaila, phone, address, birthday, sex):
-        self.Id = id1
-        self.Name = name
-        self.Email = emaila
-        self.Phone = phone
-        self.Address = address
-        self.Birthday = birthday
-        self.Sex = sex
+def fake_lecturer(number):
+    list_lec = []
+    for i in range(number):
+        id = fake.numerify(text=f'######')
+        sex = gen_sex()
+        name = fake.last_name_htilssu() + " " + gen_first_name(sex)
+        email = fake.email(domain=lecturer_mail)
+        phone = gen_phone_number()
+        address = gen_address()
+        birthday = fake.date_of_birth(minimum_age=27, maximum_age=50)
+        major = fake.major_htilssu()
+        list_lec.append(Lecturer(id, name, email, phone, address, birthday, sex, major.id))
 
-    def __str__(self):
-        return f'{self.Id}, {self.Name}, {self.Email}, {self.Phone}, {self.Address}, {self.Birthday}, {self.Sex}'
+    return list_lec
 
 
-for _ in range(number):
-    print(gen_student())
+def fake_lecturer_and_insert(number):
+    list_lec = fake_lecturer(number)
+    for lec in list_lec:
+        insert_lecturer(lec)
+
+
+def fake_class(number):
+    class_l = []
+    for i in range(number):
+        spec = fake.spec_htilssu()
+        lec = fake.lec_htilssu()
+        num_id = fake.numerify(text=f'##')
+        class_l.append(Class(spec.id + str(random_year_prefix()) + num_id, spec.id, lec.id))
+
+    return class_l
+
+
+def fake_class_and_insert(number):
+    cl_list = fake_class(number)
+    for cl in cl_list:
+        insert_class(cl)
+
+
+def fake_student_and_insert(number):
+    for i in range(number):
+        student = gen_student()
+        if student is None:
+            continue
+        insert_student(student)
