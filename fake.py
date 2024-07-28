@@ -1,15 +1,26 @@
+from datetime import datetime
 from pydoc import stripid
 
 from faker import Faker
 from faker.generator import random
 from faker.providers import DynamicProvider
 
-from db import (clazz_list, insert_class, insert_lecturer, insert_student, lecturer_list,
+from db import (class_section_list, class_session_list, clazz_list, conn, insert_class,
+                insert_class_section,
+                insert_lecturer,
+                insert_student,
+                lecturer_list,
                 major_list, \
-                specialized_list, )
+                room_list, specialized_list, student_list, subject_list, )
+from model.attendance import Attendance
 from model.class_ import Class
+from model.class_section import ClassSection
+from model.class_session import ClassSession
 from model.Lecturer import Lecturer
+from model.room import Room
 from model.student import Student
+from model.study import Study
+from model.subject import Subject
 from name_provider import cities_provider, districts_provider, female_name_provider, \
     last_name_provider, \
     male_name_provider, \
@@ -35,6 +46,30 @@ clzz_provider = DynamicProvider(
     elements=clazz_list,
 )
 
+subject_provider = DynamicProvider(
+    provider_name="subject_htilssu",
+    elements=subject_list,
+)
+
+room_provider = DynamicProvider(
+    provider_name="room_htilssu",
+    elements=room_list,
+)
+
+class_section_provider = DynamicProvider(
+    provider_name="class_section_htilssu",
+    elements=class_section_list,
+)
+class_session_provider = DynamicProvider(
+    provider_name="class_session_htilssu",
+    elements=class_session_list,
+)
+
+student_provider = DynamicProvider(
+    provider_name="student_htilssu",
+    elements=student_list,
+)
+
 fake = Faker('it_IT')
 fake.add_provider(last_name_provider)
 fake.add_provider(female_name_provider)
@@ -46,6 +81,11 @@ fake.add_provider(major_provider)
 fake.add_provider(spec_provider)
 fake.add_provider(lec_provider)
 fake.add_provider(clzz_provider)
+fake.add_provider(subject_provider)
+fake.add_provider(room_provider)
+fake.add_provider(class_section_provider)
+fake.add_provider(class_session_provider)
+fake.add_provider(student_provider)
 
 
 def gen_address():
@@ -87,7 +127,7 @@ def gen_phone_number():
 
 
 def random_year_prefix():
-    return fake.random_int(min=18, max=24)
+    return fake.random_int(min=22, max=24)
 
 
 def gen_student():
@@ -139,7 +179,7 @@ def fake_class(number):
     for i in range(number):
         spec = fake.spec_htilssu()
         lec = fake.lec_htilssu()
-        num_id = fake.numerify(text=f'##')
+        num_id = fake.numerify(text=f'#')
         class_l.append(Class(spec.id + str(random_year_prefix()) + num_id, spec.id, lec.id))
 
     return class_l
@@ -157,3 +197,60 @@ def fake_student_and_insert(number):
         if student is None:
             continue
         insert_student(student)
+
+
+def fake_class_session(number):
+    class_section: ClassSection = fake.class_section_htilssu()
+    class_section_id = class_section.id
+    for i in range(number):
+        time = fake.date_time_ad(start_datetime=datetime(2023, 1, 1),
+                                 end_datetime=datetime(2024, 9, 9))
+        room: Room = fake.room_htilssu()
+        id_room = room.name
+        lecturer: Lecturer = fake.lec_htilssu()
+        id_lecturer = lecturer.id
+        cl_session: ClassSession = ClassSession(class_section_id, time, id_room, id_lecturer, None)
+        cl_session.save_to_db(connection=conn)
+
+
+def fake_class_section(number):
+    class_section_list = []
+    for i in range(number):
+        subject: Subject = fake.subject_htilssu()
+        room: Room = fake.room_htilssu()
+        lecturer: Lecturer = fake.lec_htilssu()
+        id = fake.numerify(text=f'##########')
+        class_section_list.append(
+            ClassSection(id, subject.id, room.name, lecturer.id, fake.time(), fake.time(),
+                         fake.random_int(min=2, max=7)))
+
+    return class_section_list
+
+
+def fake_class_section_and_insert(number):
+    list_class = fake_class_section(number)
+    for list_class in list_class:
+        insert_class_section(list_class)
+
+
+def fake_attendance_and_insert(number):
+    cl = [1158838259, 1477550316, 2918588227, 2455089225, 7519467958, 8569663081, 9656631159]
+    classss = random.choice(cl)
+    for i in range(number):
+        class_session: [] = ClassSession.get_by_class_section(conn, classss)
+        for ass in class_session:
+            stud_list = Study.get_students_by_class_section(conn, ass.id_class_section)
+            for st in stud_list:
+                att = Attendance(None, ass.id, st, ass.time,
+                                 random.choice([0, 1, 2, 3]))
+                att.save_to_db(conn)
+
+
+def fake_study_and_insert(number):
+    # class_section: ClassSection = fake.class_section_htilssu()
+    cl = [1158838259, 1477550316, 2918588227, 2455089225, 7519467958, 8569663081, 9656631159]
+    classss = random.choice(cl)
+    for i in range(number):
+        student: Student = fake.student_htilssu()
+        sty = Study(student.Id, classss)
+        sty.save_to_db(conn)

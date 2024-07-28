@@ -1,14 +1,19 @@
 """
 Connects to a SQL database using pyodbc
 """
+from typing import List
 
 import pyodbc
 
 from model.class_ import Class
+from model.class_section import ClassSection
+from model.class_session import ClassSession
 from model.Lecturer import Lecturer
 from model.major_class import Major
+from model.room import Room
 from model.specialized import Specialized
 from model.student import Student
+from model.subject import Subject
 
 SERVER = 'localhost'
 DATABASE = 'QL_DiemDanh'
@@ -121,9 +126,19 @@ def insert_class(clazz: Class):
         print(f"Lỗi khi thêm class")
 
 
-major_list = get_all_major()
-specialized_list = get_all_specialization()
-lecturer_list = get_all_lecturer()
+def insert_class_section(class_section: ClassSection):
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO ClassSection (Id,Id_Subject, Id_Room, Id_Lecturer, LessionStart, "
+            "LessionEnd, DayOfWeek) "
+            "VALUES (?,?,?,?,?,?,?)", class_section.id,
+            class_section.id_subject, class_section.id_room, class_section.id_lecturer,
+            class_section.start, class_section.end, class_section.day_of_week)
+        cursor.commit()
+        cursor.close()
+    except Exception as e:
+        print(e)
 
 
 def get_all_class():
@@ -138,4 +153,77 @@ def get_all_class():
     return clazz_l
 
 
+def get_all_student():
+    student_l = []
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Student")
+    rows = cursor.fetchall()
+    for row in rows:
+        student = Student(row.Id, row.Name, row.Email, row.Phone, row.Address, row.Birthday,
+                          row.Sex, row.Id_Class)
+        student_l.append(student)
+    cursor.close()
+    return student_l
+
+
+def get_all_room():
+    room_l = []
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Room")
+    rows = cursor.fetchall()
+    for row in rows:
+        room = Room(row.Name, row.Id_Campus)
+        room_l.append(room)
+    cursor.close()
+    return room_l
+
+
+def get_all_subject():
+    subject_l = []
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Subject")
+    rows = cursor.fetchall()
+    for row in rows:
+        subject = Subject(row.Id, row.Name, row.Credit)
+        subject_l.append(subject)
+    cursor.close()
+    return subject_l
+
+
+def get_all_class_section():
+    class_section_list: List['ClassSection'] = []
+    cursor = conn.cursor()
+    cursor.execute("select * from ClassSection")
+    rows = cursor.fetchall()
+    for row in rows:
+        class_session: ClassSection = ClassSection(row.Id, row.Id_Subject, row.Id_Room,
+                                                   row.Id_Lecturer, row.LessionStart,
+                                                   row.LessionEnd, row.DayOfWeek)
+        class_section_list.append(class_session)
+    return class_section_list
+
+
+def get_all_class_session():
+    class_session_list: List['ClassSession'] = []
+    cursor = conn.cursor()
+    cursor.execute("select * from ClassSession")
+    rows = cursor.fetchall()
+    for row in rows:
+        classe_session: ClassSession = ClassSession(row.Id_ClassSection, row.Time, row.Id_Room,
+                                                    row.Id_Lecturer, row.Id)
+        class_session_list.append(classe_session)
+    return class_session_list
+
+def get_student_list_study_at(class_session):
+    sql = 'select * from ClassSection, ClassSection, Study where ClassSection.Id = ClassSession.Id_ClassSection'
+
+
+student_list = get_all_student()
+major_list = get_all_major()
+specialized_list = get_all_specialization()
+lecturer_list = get_all_lecturer()
 clazz_list = get_all_class()
+room_list = get_all_room()
+subject_list = get_all_subject()
+class_section_list = get_all_class_section()
+class_session_list = get_all_class_session()
